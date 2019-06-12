@@ -1,48 +1,48 @@
 <?php
 require '../vendor/autoload.php';
 
-Flight::register('db', 'PDO', array('mysql:host=localhost:3306;dbname=parking','root',''));
+Flight::register('db', 'PDO', array('mysql:host=localhost:3306;dbime=parking','root',''));
 
 
 Flight::route('/', function(){
     echo 'hello world!';
 });
 
-Flight::route('GET /cars', function(){
-  $cars = Flight::db()->query('select * from cars', PDO::FETCH_ASSOC)->fetchAll();
-  Flight::json($cars);
+Flight::route('GET /car', function(){
+  $car = Flight::db()->query('select * from car', PDO::FETCH_ASSOC)->fetchAll();
+  Flight::json($car);
 });
 
-Flight::route('GET /parking', function(){
-    $parking = Flight::db()->query('select * from parking', PDO::FETCH_ASSOC)->fetchAll();
-    Flight::json($parking);
+Flight::route('GET /car', function(){
+    $car = Flight::db()->query('select * from car', PDO::FETCH_ASSOC)->fetchAll();
+    Flight::json($car);
 });
 
-Flight::route('POST /cars', function(){
+Flight::route('POST /car', function(){
     $request = Flight::request()->data->getData();
     if (isset($request['id']) && $request['id'] !=''){
-      $update = "UPDATE cars SET name= :name, power = :power, year = :year, fuel = :fuel, ccm = :ccm WHERE id=:id";
+      $update = "UPDATE car SET ime= :ime, lokacija = :lokacija, velicina = :velicina WHERE id=:id";
       $stmt= Flight::db()->prepare($update);
       $stmt->execute($request);
-      Flight::json(['message' => "Car ".$request['name']." has been updated successfully"]);
+      Flight::json(['message' => "Parking ".$request['ime']." prepravljen uspjesno "]);
     }else{
       unset($request['id']);
-      $insert = "INSERT INTO cars (name, power, year, fuel, ccm) VALUES(:name, :power, :year, :fuel, :ccm)";
+      $insert = "INSERT INTO car (ime, lokacija, velicina,) VALUES(:ime, :lokacija, :velicina)";
       $stmt= Flight::db()->prepare($insert);
       $stmt->execute($request);
-      Flight::json(['message' => "Car ".$request['name']." has been added successfully"]);
+      Flight::json(['message' => "Parking ".$request['ime']." dodan uspjesno"]);
     }
 });
 
-Flight::route('DELETE /cars/@id', function($id){
-  $query = "DELETE FROM cars WHERE id = :id";
+Flight::route('DELETE /car/@id', function($id){
+  $query = "DELETE FROM car WHERE id = :id";
   $stmt= Flight::db()->prepare($query);
   $stmt->execute(['id' => $id]);
-  Flight::json(['message' => "Car has been deleted successfully"]);
+  Flight::json(['message' => "Parking uspjesno obrisan"]);
 });
 
-Flight::route('GET /cars/@id', function($id){
-  $query = "SELECT * FROM cars WHERE id = :id";
+Flight::route('GET /car/@id', function($id){
+  $query = "SELECT * FROM car WHERE id = :id";
   $stmt= Flight::db()->prepare($query);
   $stmt->execute(['id' => $id]);
   $car = $stmt->fetch(PDO::FETCH_ASSOC);
