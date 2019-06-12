@@ -1,15 +1,21 @@
 <?php
 require '../vendor/autoload.php';
 
-Flight::register('db', 'PDO', array('mysql:host=srv10.domenice.net;dbname=biznet_cars','biznet_cars','a}91g]27#&%~'));
+Flight::register('db', 'PDO', array('mysql:host=localhost:3306;dbname=parking','root',''));
+
 
 Flight::route('/', function(){
     echo 'hello world!';
 });
 
 Flight::route('GET /cars', function(){
-    $cars = Flight::db()->query('SELECT * FROM cars', PDO::FETCH_ASSOC)->fetchAll();
-    Flight::json($cars);
+  $cars = Flight::db()->query('select * from cars', PDO::FETCH_ASSOC)->fetchAll();
+  Flight::json($cars);
+});
+
+Flight::route('GET /parking', function(){
+    $parking = Flight::db()->query('select * from parking', PDO::FETCH_ASSOC)->fetchAll();
+    Flight::json($parking);
 });
 
 Flight::route('POST /cars', function(){

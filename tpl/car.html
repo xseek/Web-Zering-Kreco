@@ -1,31 +1,31 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Cars</h1>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-car-modal" onclick="$('#add-car-form').trigger('reset');">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Add Car
+            <h1 class="h3 mb-0 text-gray-800">Pronadzi Parking</h1>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-parking-modal" onclick="$('#add-parking-form').trigger('reset');">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Dodaj parking - ADMIN
           </button>
 
           </div>
 
 
           <div class="input-group">
-            <input id="car_search" onchange="search_cars()" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+            <input id="parking_search" onchange="search_parking()" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
           </div>
 
-<div id="cars_container" class="row">
+<div id="parking_container" class="row">
 
 </div>
 
 
-<div class="modal fade" id="add-car-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="add-parking-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Dodaj Parking u bazu podataka</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form id="add-car-form" method="POST" action="rest/cars">
+                <form id="add-parking-form" method="POST" action="rest/parking">
                   <div class="modal-body">
                     <input name="id" type="hidden">
 
@@ -34,21 +34,14 @@
                       <input name="name" type="text" class="form-control">
                     </div>
                     <div class="form-group">
-                      <label>Year</label>
-                      <input name="year" type="number" class="form-control">
+                      <label>location</label>
+                      <input name="location" type="text" class="form-control">
                     </div>
                     <div class="form-group">
-                      <label>Power</label>
-                      <input name="power" type="number" class="form-control">
+                      <label>size</label>
+                      <input name="size" type="number" class="form-control">
                     </div>
-                    <div class="form-group">
-                      <label>Fuel</label>
-                      <input name="fuel" type="text" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label>CCM</label>
-                      <input name="ccm" type="number" class="form-control">
-                    </div>
+                
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -62,93 +55,89 @@
 
 <script type="text/javascript">
 
-function search_cars(event){
-  if ($('#car_search').val() == ''){
-    $('#cars_container').find('.card').show()
+function search_parking(event){
+  if ($('#parking_search').val() == ''){
+    $('#parking_container').find('.parkingd').show()
   }else{
-    $('#cars_container').find('.card').hide()
-    $($('#cars_container').find('.card :contains("'+$('#car_search').val()+'")')[0]).parent().show()
+    $('#parking_container').find('.parkingd').hide()
+    $($('#parking_container').find('.parkingd :contains("'+$('#parking_search').val()+'")')[0]).parent().show()
   }
 }
-function get_cars(){
-  $.get( "rest/cars", function( data ) {
+function get_parking(){
+  $.get( "rest/parking", function( data ) {
     console.log(data);
-    $('#cars_container').html('');
+    $('#parking_container').html('');
     for(var i=0 ; i < data.length; i++){
-      $('#cars_container').append(car2html(data[i]));
+      $('#parking_container').append(parking2html(data[i]));
     }
   });
 }
 
-function car2html(car){
-  var car_html = $('#car_template').html();
-  car_html = car_html.replace('{{name}}', car.name);
-  car_html = car_html.replace('{{year}}', car.year);
-  car_html = car_html.replace('{{power}}', car.power);
-  car_html = car_html.replace('{{fuel}}', car.fuel);
-  car_html = car_html.replace('{{ccm}}', car.ccm);
-  car_html = car_html.replace('{{id}}', car.id);
-  car_html = car_html.replace('{{id}}', car.id);
-  return car_html;
+function parking2html(parking){
+  var parking_html = $('#parking_template').html();
+  parking_html = parking_html.replace('{{name}}', parking.name);
+  parking_html = parking_html.replace('{{location}}', parking.location);
+  parking_html = parking_html.replace('{{size}}', parking.size);
+  parking_html = parking_html.replace('{{id}}', parking.id);
+  parking_html = parking_html.replace('{{id}}', parking.id);
+  return parking_html;
 }
 
-function delete_car(id){
-  if (confirm("Are you sure you want to delete this car?")){
+function delete_parking(id){
+  if (confirm("Are you sure you want to delete this parking?")){
     $.ajax({
-      url: 'rest/cars/'+id,
+      url: 'rest/parking/'+id,
       type: 'DELETE',
       success: function(result) {
-          get_cars();
-          toastr.success("Car has been deleted successfully");
+          get_parking();
+          toastr.success("parking has been deleted successfully");
       }
     });
   }
 }
 
-function edit_car(id){
-  $.get( "rest/cars/"+id, function( car ) {
-    console.log(car);
-    $('#add-car-modal').modal('toggle');
-    for (var property in car) {
-      if (car.hasOwnProperty(property)) {
-        $('#add-car-form input[name="'+property+'"]').val(car[property]);
+function edit_parking(id){
+  $.get( "rest/parking/"+id, function( parking ) {
+    console.log(parking);
+    $('#add-parking-modal').modal('toggle');
+    for (var property in parking) {
+      if (parking.hasOwnProperty(property)) {
+        $('#add-parking-form input[name="'+property+'"]').val(parking[property]);
       }
     }
   });
 }
 
-get_cars();
+get_parking();
 
-$("#add-car-form").validate({
+$("#add-parking-form").validate({
   submitHandler: function(form) {
     $(form).ajaxSubmit(function(response){
       toastr.success(response.message);
-      $('#add-car-modal').modal('toggle');
-      $('#add-car-form').trigger('reset');
-      get_cars();
+      $('#add-parking-modal').modal('toggle');
+      $('#add-parking-form').trigger('reset');
+      get_parking();
     });
   }
 });
 
 </script>
 
-<script id="car_template" type="html/template">
+<script id="parking_template" type="html/template">
   <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card border-left-primary shadow h-100 py-2">
-      <div class="card-body">
+    <div class="parkingd border-left-primary shadow h-100 py-2">
+      <div class="parkingd-body">
         <div class="row no-gutters align-items-center">
           <div class="col mr-2">
             <div style="font-size: 20px;" class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{name}}</div>
-            <div class="h7 mb-0 font-weight-bold text-gray-800">Year: {{year}}</div>
-            <div class="h7 mb-0 font-weight-bold text-gray-800">Power: {{power}}kw</div>
-            <div class="h7 mb-0 font-weight-bold text-gray-800">Fuel: {{fuel}}</div>
-            <div class="h7 mb-0 font-weight-bold text-gray-800">CCM: {{ccm}}</div>
+            <div class="h7 mb-0 font-weight-bold text-gray-800">location: {{location}}</div>
+            <div class="h7 mb-0 font-weight-bold text-gray-800">size: {{size}}kw</div>
           </div>
           <div class="col-auto">
-            <a onclick="edit_car({{id}})" class="btn btn-warning btn-circle">
+            <a onclick="edit_parking({{id}})" class="btn btn-warning btn-circle">
               <i class="fas fa-edit"></i>
             </a><br><br>
-            <a onclick="delete_car({{id}})" class="btn btn-danger btn-circle">
+            <a onclick="delete_parking({{id}})" class="btn btn-danger btn-circle">
               <i class="fas fa-trash"></i>
             </a>
           </div>
